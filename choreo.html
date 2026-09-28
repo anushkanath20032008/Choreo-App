@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Choreo: fees, attendance and batches for dance studios</title>
+<meta name="description" content="Track fees, missed classes and batch sizes in one place, with WhatsApp reminders. Built for dance studios in India.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f6f5fb;--ink:#15132b;--mute:#5d5b74;--line:rgba(21,19,43,.1);--glass:rgba(255,255,255,.66);--glass2:rgba(255,255,255,.92);--a:#6d5efc;--b:#ff8a6b;--ok:#17a08f;--warn:#d98a0b;--bad:#e5484d;--g:linear-gradient(120deg,#6d5efc,#b16cf6 52%,#ff8a6b);--sh:0 24px 60px -24px rgba(60,40,140,.35);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0d0c1a;--ink:#f2f0ff;--mute:#a9a6c4;--line:rgba(255,255,255,.1);--glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.13);--ok:#3ed3bf;--warn:#f5b13d;--sh:0 24px 60px -24px rgba(0,0,0,.7)}}
+:root[data-theme="dark"]{--bg:#0d0c1a;--ink:#f2f0ff;--mute:#a9a6c4;--line:rgba(255,255,255,.1);--glass:rgba(255,255,255,.07);--glass2:rgba(255,255,255,.13);--ok:#3ed3bf;--warn:#f5b13d;--sh:0 24px 60px -24px rgba(0,0,0,.7)}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 84px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.6 "Bricolage Grotesque",system-ui,-apple-system,"Segoe UI",sans-serif;overflow-x:hidden}
+a{color:inherit}
+.w{max-width:1120px;margin:0 auto;padding:0 22px}
+:focus-visible{outline:3px solid var(--a);outline-offset:3px;border-radius:8px}
+.skip{position:absolute;left:-999px}.skip:focus{left:12px;top:12px;z-index:99;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:99px}
+.glass{background:var(--glass);border:1px solid var(--glass2);box-shadow:var(--sh)}
+.blur{backdrop-filter:blur(16px) saturate(1.4);-webkit-backdrop-filter:blur(16px) saturate(1.4)}
+.txt{background:var(--g);-webkit-background-clip:text;background-clip:text;color:transparent}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:10;padding:12px 0}
+.bar{display:flex;align-items:center;gap:20px;padding:9px 12px 9px 18px;border-radius:99px}
+header.s .bar{box-shadow:var(--sh)}
+.logo{font-weight:800;font-size:20px;text-decoration:none;display:flex;gap:9px;align-items:center;letter-spacing:-.02em}
+.logo i{width:26px;height:26px;border-radius:9px;background:var(--g);display:block}
+nav{display:flex;gap:4px;margin-left:auto}
+nav a{text-decoration:none;color:var(--mute);font-size:15px;padding:7px 13px;border-radius:99px;transition:.2s}nav a:hover{background:var(--glass2);color:var(--ink)}
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;gap:8px;border:0;border-radius:99px;padding:13px 24px;font:600 16px "Bricolage Grotesque",sans-serif;text-decoration:none;cursor:pointer;color:#fff;background:var(--g);box-shadow:0 14px 34px -12px rgba(109,94,252,.7)}
+.btn:hover{filter:brightness(1.08)}
+.btn.sm{padding:9px 18px;font-size:15px}
+.btn.ghost{background:var(--glass);color:var(--ink);border:1px solid var(--glass2);box-shadow:none}
+.mb{display:none;margin-left:auto;background:var(--glass2);border:1px solid var(--line);width:42px;height:42px;border-radius:50%;color:var(--ink);font-size:18px;cursor:pointer}
+#menu{display:none;margin-top:8px;padding:10px;border-radius:24px;flex-direction:column}#menu.o{display:flex}
+#menu a{padding:13px 16px;text-decoration:none;border-radius:14px}#menu a:hover{background:var(--glass2)}
+.hero{position:relative;overflow:clip;text-align:center;padding:56px 0 40px}
+.hero>.w{position:relative;z-index:1}
+.blob{position:absolute;left:50%;top:-110px;width:min(760px,150vw);transform:translateX(-50%);pointer-events:none}
+.pill{display:inline-flex;gap:8px;align-items:center;padding:6px 14px;border-radius:99px;font-size:14px;color:var(--mute)}
+.pill b{width:8px;height:8px;border-radius:50%;background:var(--ok)}
+h1{font-size:clamp(40px,7vw,78px);line-height:1;letter-spacing:-.035em;font-weight:800;margin:22px auto 20px;max-width:15ch}
+.lede{font-size:clamp(17px,2.2vw,20px);color:var(--mute);max-width:56ch;margin:0 auto 30px}
+.cta-row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+.assure{font-size:14px;color:var(--mute);margin-top:18px}
+.dash{position:relative;margin:54px auto 0;max-width:900px;border-radius:26px;text-align:left}
+.dash>.top{display:flex;gap:7px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:center}
+.dash>.top i{width:10px;height:10px;border-radius:50%;background:var(--line)}
+.dash>.top span{margin-left:auto;font-size:12px;color:var(--mute)}
+.dg{display:grid;grid-template-columns:160px 1fr}
+.side{padding:14px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;font-size:14px}
+.side div{padding:8px 12px;border-radius:12px;color:var(--mute)}.side .on{background:var(--glass2);color:var(--ink);font-weight:600}
+.main{padding:18px;min-width:0}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.st{padding:12px 14px;border-radius:16px;border:1px solid var(--line);background:var(--glass)}
+.st small{display:block;color:var(--mute);font-size:12px}.st b{font-size:20px;letter-spacing:-.02em}
+.list{margin-top:12px;border:1px solid var(--line);border-radius:16px;overflow:hidden}
+.li{display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:14px;border-top:1px solid var(--line)}.li:first-child{border-top:0}
+.li .n{flex:1;min-width:0}.li small{display:block;color:var(--mute);font-size:12px}
+.tag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;border:1px solid currentColor;white-space:nowrap}
+.tag.p{color:var(--ok)}.tag.d{color:var(--warn)}.tag.o{color:var(--bad)}.tag.s{color:var(--a)}
+.rem{font:600 12px "Bricolage Grotesque",sans-serif;border:0;border-radius:99px;padding:6px 12px;background:var(--ink);color:var(--bg);cursor:pointer}.rem:disabled{opacity:.55;cursor:default}
+.chip{position:absolute;padding:11px 14px;border-radius:18px;font-size:13px;display:flex;gap:10px;align-items:center}
+.chip b{display:block;font-size:13px}.chip small{color:var(--mute);font-size:12px}
+.dot{width:30px;height:30px;border-radius:10px;display:grid;place-items:center;background:var(--g);color:#fff;font-size:14px}
+section{position:relative;padding:88px 0}
+.eh{max-width:640px;margin:0 auto 44px;text-align:center}
+h2{font-size:clamp(30px,4.6vw,50px);line-height:1.04;letter-spacing:-.03em;font-weight:800;margin:0 0 14px}
+.eh p{color:var(--mute);margin:0}
+.calc{display:grid;grid-template-columns:1fr 1fr;gap:34px;align-items:center;padding:38px;border-radius:32px}
+.calc h2{font-size:clamp(28px,4vw,42px)}
+.big{font-size:clamp(44px,7vw,68px);font-weight:800;letter-spacing:-.04em;line-height:1;margin:6px 0 8px}
+.ctl{display:grid;grid-template-columns:1fr auto;gap:0 10px;margin-bottom:14px;font-size:15px}.ctl output{font-weight:700}
+.ctl input{grid-column:1/-1;padding:0;border:0;background:none;accent-color:#7a63f6;height:30px;width:100%}
+.fine{font-size:13px;color:var(--mute);margin:0}
+.bento{display:grid;grid-template-columns:repeat(6,1fr);gap:16px}
+.bc{border-radius:26px;padding:28px}
+.c4{grid-column:span 4}.c2{grid-column:span 2}
+.bc h3{font-size:22px;margin:16px 0 6px;letter-spacing:-.01em}.bc p{margin:0;color:var(--mute);font-size:16px}
+.ic{width:46px;height:46px;border-radius:15px;background:var(--g);display:grid;place-items:center}
+.ic svg{width:24px;height:24px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.mini{display:flex;gap:8px;margin-top:18px;flex-wrap:wrap}
+.bar2{height:8px;border-radius:9px;background:var(--line);overflow:hidden;margin-top:16px}.bar2 b{display:block;height:100%;background:var(--g);border-radius:9px;width:var(--w,0)}
+.tabs{display:flex;gap:6px;justify-content:center;margin-bottom:26px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--glass2);background:var(--glass);color:var(--mute);font:600 15px "Bricolage Grotesque",sans-serif;padding:10px 20px;border-radius:99px;cursor:pointer;transition:.2s}
+.tabs button[aria-selected=true]{background:var(--ink);color:var(--bg)}
+.pn{max-width:760px;margin:0 auto;border-radius:26px;padding:18px}.pn[hidden]{display:none}
+.pn h3{margin:0 0 4px;font-size:18px}.pn>p{margin:0 0 12px;color:var(--mute);font-size:14px}
+.att{display:flex;flex-wrap:wrap;gap:8px}
+.ch{border:1px solid var(--line);background:var(--glass);color:var(--ink);font:600 14px "Bricolage Grotesque",sans-serif;padding:8px 14px;border-radius:99px;cursor:pointer;transition:.2s}
+.ch[aria-pressed=false]{border-color:var(--bad);color:var(--bad);text-decoration:line-through}
+.ben{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.bn{padding:28px;border-radius:26px}
+.bn h3{margin:0 0 8px;font-size:22px;letter-spacing:-.02em}.bn p{margin:0;color:var(--mute)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:stretch}
+.art{border-radius:26px;display:grid;place-items:center;padding:20px;min-height:260px}.art svg{width:100%;max-width:420px;height:auto}
+.card{padding:32px;border-radius:28px}.card h3{margin:0 0 10px;font-size:24px;letter-spacing:-.02em}
+.card ul{list-style:none;padding:0;margin:0 0 18px}.card li{padding:5px 0 5px 26px;position:relative}.card li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:800}
+.card h4{margin:14px 0 6px;font-size:14px;color:var(--mute);font-weight:600}
+.pc{max-width:470px;margin:0 auto;padding:34px;border-radius:32px;border:1.5px solid transparent;background:linear-gradient(var(--bg),var(--bg)) padding-box,var(--g) border-box}
+.pc h3{margin:0;font-size:22px}.amt{font-size:52px;font-weight:800;letter-spacing:-.03em;margin:8px 0 2px}.amt small{font-size:16px;font-weight:400;color:var(--mute)}
+.pc ul{list-style:none;padding:0;margin:18px 0 22px}.pc li{padding:6px 0 6px 26px;position:relative}.pc li::before{content:"✓";position:absolute;left:0;color:var(--ok);font-weight:800}
+.pc .btn{width:100%}
+details{border-radius:20px;margin-bottom:10px;padding:0 22px}
+summary{padding:19px 0;font-weight:600;font-size:18px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;gap:12px}
+summary::-webkit-details-marker{display:none}summary::after{content:"+";font-size:22px;line-height:1}
+details[open] summary::after{transform:rotate(45deg)}details p{margin:0 0 20px;color:var(--mute)}
+.fq{max-width:740px;margin:0 auto}
+.cta{border-radius:36px;padding:54px 28px;text-align:center;position:relative;overflow:hidden}
+.cta form{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:640px;margin:26px auto 0;text-align:left}
+.cta form .full{grid-column:1/-1}
+input[type=text],input[type=tel]{font:inherit;padding:13px 16px;border-radius:14px;border:1px solid var(--line);background:var(--glass2);color:var(--ink);width:100%}
+label{display:block;font-size:13px;font-weight:600;margin-bottom:4px;color:var(--mute)}
+.chk{display:flex;gap:10px;align-items:center;font-size:15px;font-weight:400;color:var(--ink);cursor:pointer}.chk input{width:20px;height:20px;accent-color:#7a63f6}
+#st{min-height:22px;font-size:14px;color:var(--mute);margin:14px 0 0}
+footer{border-top:1px solid var(--line);padding:34px 0 40px;color:var(--mute);font-size:14px}
+footer .w{display:flex;flex-wrap:wrap;gap:16px 34px;justify-content:space-between;align-items:center}
+footer nav{margin:0}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translate(-50%,30px);opacity:0;padding:12px 20px;border-radius:99px;z-index:20;transition:.35s;font-size:15px;pointer-events:none}.toast.o{opacity:1;transform:translate(-50%,0)}
+.rv{opacity:1}
+@media (max-width:860px){nav,header .bar>.btn{display:none}.mb{display:block}.side,.chip{display:none}.dg{grid-template-columns:1fr}.c4,.c2{grid-column:span 6}.ben,.calc,.two,.cta form{grid-template-columns:1fr}.calc{padding:26px}section{padding:64px 0}}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}.rv{opacity:1;transform:none}.bar2 b{width:var(--w)}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+<a class="skip" href="#features">Skip to content</a>
+<header id="hd"><div class="w"><div class="bar glass blur">
+  <a class="logo" href="#top" aria-label="Home"><i></i><span class="brand">Choreo</span></a>
+  <nav aria-label="Primary"><a href="#features">Features</a><a href="#product">Product</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a></nav>
+  <a class="btn sm" href="#book">Book a demo</a>
+  <button class="mb" id="mb" aria-expanded="false" aria-controls="menu" aria-label="Open menu">☰</button>
+</div>
+<div id="menu" class="glass blur" aria-label="Mobile"><a href="#features">Features</a><a href="#product">Product</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a class="btn" href="#book" style="margin-top:6px">Book a 15-minute demo</a></div>
+</div></header>
+
+<main id="top">
+<div class="hero">
+  <svg class="blob" viewBox="0 0 400 400" aria-hidden="true"><defs>
+    <radialGradient id="bg"><stop offset="0" stop-color="#8b7bff" stop-opacity=".6"/><stop offset=".65" stop-color="#ff9a7d" stop-opacity=".32"/><stop offset="1" stop-color="#ff9a7d" stop-opacity="0"/></radialGradient>
+    <linearGradient id="gr" x1="0" x2="1"><stop offset="0" stop-color="#6d5efc"/><stop offset=".55" stop-color="#b16cf6"/><stop offset="1" stop-color="#ff8a6b"/></linearGradient></defs>
+    <path fill="url(#bg)" d="M200 40C280 30 370 100 365 195C360 290 290 370 195 362C100 354 32 290 40 200C48 110 120 50 200 40Z">
+    </path></svg>
+<div class="w">
+  <div class="pill glass rv"><b></b>Built for dance studios in India</div>
+  <h1 class="rv" style="--i:1">Fees, attendance and batches, finally <span class="txt">in step.</span></h1>
+  <p class="lede rv" style="--i:2"><span class="brand">Choreo</span> is the calm operations desk for your studio. Track payments, missed classes and batch sizes in one place, and let WhatsApp do the chasing.</p>
+  <div class="cta-row rv" style="--i:3"><a class="btn" href="#book">Book a 15-minute demo</a><a class="btn ghost" href="#product">See how it works</a></div>
+  <p class="assure rv" style="--i:4">We run the demo on your own student list. Setup is free for founding studios.</p>
+
+  <div class="dash glass blur rv" style="--i:5" aria-label="Sample dashboard">
+    <div class="top"><i></i><i></i><i></i><span>Sample data</span></div>
+    <div class="dg">
+      <div class="side"><div class="on">Today</div><div>Batches</div><div>Fees</div><div>Settings</div></div>
+      <div class="main">
+        <div class="stats">
+          <div class="st"><small>Collected</small><b>₹1,24,500</b></div>
+          <div class="st"><small>Pending</small><b>₹18,200</b></div>
+          <div class="st"><small>Overdue</small><b>₹4,600</b></div>
+        </div>
+        <div class="list">
+          <div class="li"><div class="n">Ananya R.<small>Kathak L2</small></div><b>₹4,500</b><span class="tag p">Paid</span></div>
+          <div class="li"><div class="n">Kabir S.<small>Hip-hop L2</small></div><b>₹3,200</b><span class="tag d">Due</span><button class="rem">Remind</button></div>
+          <div class="li"><div class="n">Zoya M.<small>Bharatanatyam L1 · 4 days late</small></div><b>₹2,800</b><span class="tag o">Overdue</span><button class="rem">Remind</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="chip glass blur" style="right:-22px;top:70px"><span class="dot">₹</span><div><b>Payment received</b><small>Ananya R. · just now</small></div></div>
+    <div class="chip glass blur" style="left:-22px;bottom:60px"><span class="dot">✓</span><div><b>Reminders sent</b><small>9 parents on WhatsApp</small></div></div>
+  </div>
+</div></div>
+
+<section style="padding-top:40px"><div class="w"><div class="calc glass rv">
+  <div><h2>How much are you chasing each month?</h2><p style="color:var(--mute);margin:0 0 16px">Slide to match your studio. This is the money that quietly goes missing.</p>
+    <div class="big txt" id="out" aria-live="polite">₹0</div><p class="fine" id="sum"></p></div>
+  <div>
+    <div class="ctl"><label for="n" style="margin:0">Students</label><output id="nv"></output><input id="n" type="range" min="10" max="300" step="5" value="60"></div>
+    <div class="ctl"><label for="f" style="margin:0">Monthly fee</label><output id="fv"></output><input id="f" type="range" min="500" max="6000" step="100" value="2500"></div>
+    <div class="ctl"><label for="l" style="margin:0">Pay late or never</label><output id="lv"></output><input id="l" type="range" min="5" max="50" step="1" value="20"></div>
+    <p class="fine">An estimate from your own numbers, not a promise.</p>
+  </div>
+</div></div></section>
+
+<section id="features" style="padding-top:20px"><div class="w">
+  <div class="eh"><h2 class="rv">Everything your front desk juggles, in one place.</h2><p class="rv" style="--i:1">Replace notebooks, spreadsheets and endless WhatsApp groups with one connected system.</p></div>
+  <div class="bento">
+    <div class="bc glass c4 rv"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="13" rx="3"/><path d="M3 10h18"/><circle cx="16.5" cy="14.5" r="1"/></svg></div><h3>Fee tracking that keeps up</h3><p>See who has paid, who is due and who is slipping, all in one list with overdue clearly marked.</p><div class="mini"><span class="tag p">Paid</span><span class="tag d">Due</span><span class="tag o">Overdue</span><span class="tag s">Reminder sent</span></div></div>
+    <div class="bc glass c2 rv" style="--i:1"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg></div><h3>Missed classes, logged</h3><p>Mark a batch in seconds and see who keeps missing.</p></div>
+    <div class="bc glass c2 rv"><div class="ic"><svg viewBox="0 0 24 24"><circle cx="9" cy="8.5" r="3"/><circle cx="17" cy="9.5" r="2.5"/><path d="M3.5 19c.6-3 3-4.5 5.5-4.5s4.9 1.5 5.5 4.5M15.5 14.8c2.4-.4 4.4.8 5 4"/></svg></div><h3>Batch size at a glance</h3><p>Live fill rates tell you when to plan the next batch.</p><div class="bar2"><b style="--w:92%"></b></div></div>
+    <div class="bc glass c4 rv" style="--i:1"><div class="ic"><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><path d="M8.5 9.5h7M8.5 12.5h4"/></svg></div><h3>WhatsApp reminders with a UPI link</h3><p>Polite reminders go out on the timing you choose. Parents tap, pay and get a receipt, with no app to install.</p></div>
+  </div>
+</div></section>
+
+<section id="product"><div class="w">
+  <div class="eh"><h2 class="rv">See a day in the studio.</h2><p class="rv" style="--i:1">Try it. These are sample screens with sample data.</p></div>
+  <div class="tabs rv" role="tablist" aria-label="Product views">
+    <button role="tab" aria-selected="true" data-t="0">Fees</button><button role="tab" aria-selected="false" data-t="1">Attendance</button><button role="tab" aria-selected="false" data-t="2">Batches</button>
+  </div>
+  <div class="pn glass rv" data-p="0" role="tabpanel"><h3>Fees · October</h3><p>Tap Remind to send a WhatsApp nudge.</p>
+    <div class="list"><div class="li"><div class="n">Naina K.<small>Contemporary</small></div><b>₹1,600</b><span class="tag d">Due</span><button class="rem">Remind</button></div><div class="li"><div class="n">Zoya M.<small>Bharatanatyam L1</small></div><b>₹2,800</b><span class="tag o">Overdue</span><button class="rem">Remind</button></div><div class="li"><div class="n">Dev P.<small>Salsa bootcamp</small></div><b>₹5,500</b><span class="tag p">Paid</span></div></div></div>
+  <div class="pn glass" data-p="1" role="tabpanel" hidden><h3>Hip-hop L2 · Tue 6 pm</h3><p>Everyone starts present. Tap a name to mark absent. <b id="ac"></b></p><div class="att" id="att"></div></div>
+  <div class="pn glass" data-p="2" role="tabpanel" hidden><h3>Batches</h3><p>Fill rate for each batch.</p>
+    <div class="li" style="display:block"><b>Hip-hop L2</b> · 24 of 24<div class="bar2"><b style="--w:100%"></b></div></div>
+    <div class="li" style="display:block"><b>Kathak L2</b> · 12 of 24<div class="bar2"><b style="--w:50%"></b></div></div>
+    <div class="li" style="display:block"><b>Bhangra fit</b> · 16 of 24<div class="bar2"><b style="--w:67%"></b></div></div></div>
+</div></section>
+
+<section id="benefits"><div class="w">
+  <div class="eh"><h2 class="rv">More time to teach. Fewer awkward reminders.</h2></div>
+  <div class="ben">
+    <div class="bn glass rv"><h3>Your evenings, back</h3><p>No more Sunday-night reconciling from three notebooks. Your fee records stay up to date while you teach.</p></div>
+    <div class="bn glass rv" style="--i:1"><h3>Money you can see early</h3><p>Dues show up before they go stale, and automatic reminders do the awkward part for you.</p></div>
+    <div class="bn glass rv" style="--i:2"><h3>Setup without the pain</h3><p>Send a photo of your register or a spreadsheet. We enter the students, batches and fees for you.</p></div>
+  </div>
+</div></section>
+
+<section id="voices"><div class="w">
+  <div class="eh"><h2 class="rv">Built with studio owners, not for them.</h2></div>
+  <div class="two">
+    <div class="art glass"><svg viewBox="0 0 400 300" role="img" aria-label="Line illustration of a dancer in a sweeping pose"><defs><linearGradient id="gd" gradientUnits="userSpaceOnUse" x1="60" y1="0" x2="340" y2="0"><stop offset="0" stop-color="#6d5efc"/><stop offset=".55" stop-color="#b16cf6"/><stop offset="1" stop-color="#ff8a6b"/></linearGradient><g id="dn" fill="none" stroke="url(#gd)" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"><circle cx="200" cy="66" r="13"/><path d="M200 84C204 110 199 136 196 160"/><path d="M200 98C172 92 142 72 114 46"/><path d="M200 102C236 100 268 110 302 96"/><path d="M196 160C194 200 190 236 188 266L174 270"/><path d="M196 160C232 166 268 168 306 156"/><path d="M196 152C160 168 128 196 104 234"/></g></defs><use href="#dn" transform="translate(-46 8)" opacity=".18"/><use href="#dn" transform="translate(-23 4)" opacity=".38"/><use href="#dn"/></svg></div>
+    <div class="card glass rv" style="--i:1"><h3>Founding studios: the first 10</h3>
+      <h4>What you get</h4><ul><li>Free setup on your own student list</li><li>A direct line to the founder</li><li>Your launch price locked for a year</li></ul>
+      <h4>What we ask</h4><ul><li>A 15-minute feedback call each month</li><li>Permission to quote you, only if you are happy</li></ul>
+      <a class="btn" href="#book">Book a 15-minute demo</a></div>
+  </div>
+</div></section>
+
+<section id="pricing"><div class="w">
+  <div class="eh"><h2 class="rv">One simple plan.</h2><p class="rv" style="--i:1">After your demo, pay the first month upfront. Cancel any time.</p></div>
+  <div class="pc rv"><h3>Founding studio</h3><div class="amt" id="price">₹___<small> / month</small></div>
+    <ul><li>Batches and roster</li><li>One-tap attendance and missed-class log</li><li>Fee tracking</li><li>WhatsApp reminders with UPI links</li><li>Setup done for you</li></ul>
+    <a class="btn" href="#book">Book a 15-minute demo</a></div>
+</div></section>
+
+<section id="faq"><div class="w"><div class="eh"><h2 class="rv">Questions owners ask.</h2></div><div class="fq">
+  <details class="glass rv"><summary>Do parents need to install an app?</summary><p>No. They get a WhatsApp message with a link, pay by UPI and receive a receipt.</p></details>
+  <details class="glass rv"><summary>Can you move my data from a register or spreadsheet?</summary><p>Yes. Send a spreadsheet or a photo of your register and we enter it for you.</p></details>
+  <details class="glass rv"><summary>How do the reminders work?</summary><p>You pick the timing, for example three days before the due date and a nudge four days after. Each message includes a payment link.</p></details>
+  <details class="glass rv"><summary>We have several trainers. Is that covered?</summary><p>Today the app is built around one studio team. Tick "multiple trainers" when you book and tell us how you work. It shapes what we build next.</p></details>
+  <details class="glass rv"><summary>What if I want to stop?</summary><p>Cancel any time. We hand you all your students, attendance and fees as a spreadsheet.</p></details>
+</div></div></section>
+
+<section id="book"><div class="w"><div class="cta glass blur rv">
+  <h2>Your best season starts with fewer chores.</h2>
+  <p style="color:var(--mute);margin:0">Tell us about your studio and we will set up a 15-minute demo on your own student list.</p>
+  <form id="f2" novalidate>
+    <div><label for="s">Studio name</label><input id="s" type="text" autocomplete="organization" required></div>
+    <div><label for="p">WhatsApp number</label><input id="p" type="tel" inputmode="tel" autocomplete="tel" required></div>
+    <label class="chk full" for="mt"><input id="mt" type="checkbox">We have multiple trainers</label>
+    <div class="full"><button class="btn" type="submit" style="width:100%">Book a 15-minute demo</button></div>
+  </form><p id="st" role="status"></p>
+</div></div></section>
+</main>
+
+<footer><div class="w"><a class="logo" href="#top"><i></i><span class="brand">Choreo</span></a>
+<nav aria-label="Footer"><a href="#features">Features</a><a href="#pricing">Pricing</a><a href="#faq">FAQ</a><a href="#book">Book a demo</a></nav>
+<span>Less admin, more art.</span></div></footer>
+<div class="toast glass blur" id="toast" role="status"></div>
+
+<script>
+// Fill these in before sharing.
+var BRAND = "Choreo";          // change once to rename everywhere
+var WA_NUMBER = "";            // e.g. "919812345678"
+var PRICE = "";                // e.g. "999"
+
+var $ = function(s,r){return (r||document).querySelector(s)}, $$ = function(s,r){return Array.prototype.slice.call((r||document).querySelectorAll(s))};
+var inr = function(x){return "₹" + Math.round(x).toLocaleString("en-IN")};
+$$(".brand").forEach(function(e){e.textContent=BRAND});
+document.title = BRAND + ": fees, attendance and batches for dance studios";
+if(PRICE)$("#price").firstChild.nodeValue="₹"+PRICE;
+
+
+var hd=$("#hd");addEventListener("scroll",function(){hd.classList.toggle("s",scrollY>20)},{passive:true});
+var mb=$("#mb"),mn=$("#menu");mb.addEventListener("click",function(){var o=mn.classList.toggle("o");mb.setAttribute("aria-expanded",o);mb.textContent=o?"✕":"☰"});
+$$("#menu a").forEach(function(a){a.addEventListener("click",function(){mn.classList.remove("o");mb.textContent="☰";mb.setAttribute("aria-expanded","false")})});
+
+function calc(){var n=+$("#n").value,f=+$("#f").value,l=+$("#l").value;
+ $("#nv").textContent=n;$("#fv").textContent=inr(f);$("#lv").textContent=l+"%";
+ $("#out").textContent=inr(n*f*l/100);$("#sum").textContent=n+" students · "+inr(f)+" a month · "+l+"% pay late or never"}
+["n","f","l"].forEach(function(i){$("#"+i).addEventListener("input",calc)});calc();
+
+var tt;function toast(m){var t=$("#toast");t.textContent=m;t.classList.add("o");clearTimeout(tt);tt=setTimeout(function(){t.classList.remove("o")},2400)}
+$$(".rem").forEach(function(b){b.addEventListener("click",function(){var row=b.closest(".li"),tag=$(".tag",row),nm=$(".n",row).firstChild.textContent;tag.className="tag s";tag.textContent="Reminder sent";b.textContent="Sent ✓";b.disabled=true;toast("WhatsApp reminder sent to "+nm+"'s parent")})});
+
+var tabs=$$(".tabs button");tabs.forEach(function(b){b.addEventListener("click",function(){tabs.forEach(function(x){x.setAttribute("aria-selected",x===b)});$$(".pn").forEach(function(p){p.hidden=p.dataset.p!==b.dataset.t;if(!p.hidden)p.classList.add("in")})})});
+
+var names=["Aarav","Kabir","Zoya","Dev","Naina","Isha","Rehan","Mira"];
+$("#att").innerHTML=names.map(function(n){return '<button class="ch" aria-pressed="true">'+n+'</button>'}).join("");
+function cnt(){$("#ac").textContent=$$(".ch[aria-pressed=true]").length+" of "+names.length+" present"}
+$$(".ch").forEach(function(c){c.addEventListener("click",function(){c.setAttribute("aria-pressed",c.getAttribute("aria-pressed")!=="true");cnt()})});cnt();
+
+$("#f2").addEventListener("submit",function(e){e.preventDefault();var s=$("#s").value.trim(),p=$("#p").value.trim(),st=$("#st");
+ if(!s||!p){st.textContent="Please add your studio name and WhatsApp number.";return}
+ if(!WA_NUMBER){st.textContent="Booking is not open yet. Please check back soon.";return}
+ st.textContent="Opening WhatsApp...";
+ var m="Hi, I run "+s+". My WhatsApp is "+p+". I'd like a "+BRAND+" demo."+($("#mt").checked?" We have multiple trainers.":"")+" Calculator: "+$("#sum").textContent+" = about "+$("#out").textContent+" a month.";
+ open("https://wa.me/"+WA_NUMBER+"?text="+encodeURIComponent(m),"_blank","noopener")});
+</script>
+</body>
+</html>
